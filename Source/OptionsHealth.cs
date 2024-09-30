@@ -20,16 +20,15 @@ namespace EdB.PrepareCarefully {
     public class OptionsHealth {
         protected List<UniqueBodyPart> bodyPartList = new List<UniqueBodyPart>();
         protected Dictionary<BodyPartDef, List<UniqueBodyPart>> bodyPartDefLookup = new Dictionary<BodyPartDef, List<UniqueBodyPart>>();
-        protected Dictionary<RecipeDef, List<UniqueBodyPart>> implantRecipeLookup = new Dictionary<RecipeDef, List<UniqueBodyPart>>();
         protected Dictionary<BodyPartRecord, UniqueBodyPart> bodyPartRecordLookup = new Dictionary<BodyPartRecord, UniqueBodyPart>();
         protected Dictionary<string, List<UniqueBodyPart>> bodyPartGroupLookup = new Dictionary<string, List<UniqueBodyPart>>();
 
-        protected List<RecipeDef> implantRecipes = new List<RecipeDef>();
+        protected Dictionary<RecipeDef, List<UniqueBodyPart>> implantRecipeLookup = new Dictionary<RecipeDef, List<UniqueBodyPart>>();
+
         protected Dictionary<HediffDef, InjuryOption> injuryOptionsByHediff = new Dictionary<HediffDef, InjuryOption>();
         protected List<InjuryOption> injuryOptions = new List<InjuryOption>();
-        public OptionsHealth() {
 
-        }
+        public List<ImplantOption> ImplantOptions { get; private set; } = new List<ImplantOption>();
         public BodyDef BodyDef {
             get; set;
         }
@@ -104,7 +103,7 @@ namespace EdB.PrepareCarefully {
             if (def != null) {
                 return FindBodyPart(def, index);
             }
-            Logger.Warning("Did not find body part: " + name);/*
+            /*
             List<UniqueBodyPart> result;
             if (bodyPartDefLookup.TryGetValue(def, out result)) {
                 if (index < result.Count) {
@@ -122,41 +121,112 @@ namespace EdB.PrepareCarefully {
                 return null;
             }
         }
-        public List<UniqueBodyPart> FindBodyPartsForDef(BodyPartDef def) {
+        public IEnumerable<UniqueBodyPart> FindBodyPartsForDef(BodyPartDef def) {
             if (bodyPartDefLookup.TryGetValue(def, out List<UniqueBodyPart> result)) {
                 return result;
             }
             else {
-                return null;
+                return Enumerable.Empty<UniqueBodyPart>();
             }
         }
         public IEnumerable<RecipeDef> FindImplantRecipesThatAddHediff(Hediff hediff) {
-            return ImplantRecipes.Where((RecipeDef def) => {
-                if (def.addsHediff == null) {
+            return ImplantOptions.Where(o => RecipeAddsHediff(o.RecipeDef, hediff)).Select(o => o.RecipeDef);
+        }
+
+        public IEnumerable<ImplantOption> FindImplantOptionsThatAddHediff(Hediff hediff) {
+            return ImplantOptions.Where((ImplantOption o) => {
+                if (RecipeAddsHediff(o.RecipeDef, hediff)) {
+                    return true;
+                }
+                if (o.HediffDef == null) {
                     return false;
                 }
-                if (def.addsHediff != hediff.def) {
+                if (o.HediffDef != hediff.def) {
                     return false;
                 }
                 if (hediff.Part != null) {
-                    if (def.appliedOnFixedBodyParts.Contains(hediff.Part.def)) {
-                        return true;
+                    if (o.BodyPartDefs.NullOrEmpty()) {
+                        return false;
                     }
-                    foreach (var group in def.appliedOnFixedBodyPartGroups) {
-                        var parts = this.PartsForBodyPartGroup(group.defName);
-                        if (parts != null) {
-                            if (parts.ConvertAll(p => p.Record.def).Contains(hediff.Part.def)) {
-                                return true;
-                            }
+                    if (!o.BodyPartDefs.Contains(hediff.Part.def)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
+
+        public ImplantOption FindImplantOptionThatAddsHediffDefToBodyPart(HediffDef hediffDef, BodyPartDef bodyPartDef) {
+            return ImplantOptions.Where(o => {
+                if (o.HediffDef != hediffDef) {
+                    return false;
+                }
+                if (bodyPartDef == null && o.BodyPartDefs == null) {
+                    return true;
+                }
+                return o.BodyPartDefs.Contains(bodyPartDef);
+            }).FirstOrDefault();
+        }
+
+        public ImplantOption FindImplantOptionThatAddsRecipeDefToBodyPart(RecipeDef recipefDef, BodyPartDef bodyPartDef) {
+            if (recipefDef == null) {
+                return null;
+            }
+            return ImplantOptions.Where(o => {
+                return RecipeTargetsBodyPart(recipefDef, bodyPartDef);
+            }).FirstOrDefault();
+        }
+
+        public bool RecipeAddsHediff(RecipeDef recipe, Hediff hediff) {
+            if (recipe == null) {
+                return false;
+            }
+            if (recipe.addsHediff == null) {
+                return false;
+            }
+            if (recipe.addsHediff != hediff.def) {
+                return false;
+            }
+            if (hediff.Part != null) {
+                if (recipe.appliedOnFixedBodyParts.Contains(hediff.Part.def)) {
+                    return true;
+                }
+                foreach (var group in recipe.appliedOnFixedBodyPartGroups) {
+                    var parts = this.PartsForBodyPartGroup(group.defName);
+                    if (parts != null) {
+                        if (parts.ConvertAll(p => p.Record.def).Contains(hediff.Part.def)) {
+                            return true;
                         }
                     }
                 }
-                else if (def.appliedOnFixedBodyParts.Count == 0 && def.appliedOnFixedBodyPartGroups.Count == 0) {
+            }
+            else if (recipe.appliedOnFixedBodyParts.Count == 0 && recipe.appliedOnFixedBodyPartGroups.Count == 0) {
+                return true;
+            }
+            return false;
+        }
+        public bool RecipeTargetsBodyPart(RecipeDef recipeDef, BodyPartDef bodyPartDef) {
+            if (bodyPartDef == null && !recipeDef.targetsBodyPart) {
+                return true;
+            }
+            if (recipeDef.appliedOnFixedBodyParts != null) {
+                if (recipeDef.appliedOnFixedBodyParts.Contains(bodyPartDef)) {
                     return true;
                 }
-                return false;
-            });
+            }
+            if (recipeDef.appliedOnFixedBodyPartGroups != null) {
+                foreach (var group in recipeDef.appliedOnFixedBodyPartGroups) {
+                    var parts = this.PartsForBodyPartGroup(group.defName);
+                    if (parts != null) {
+                        if (parts.Select(p => p.Record.def).Contains(bodyPartDef)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
+
         public IEnumerable<UniqueBodyPart> SkinCoveredBodyParts {
             get {
                 return bodyPartList.Where((UniqueBodyPart p) => { return p.SkinCovered; });
@@ -174,37 +244,45 @@ namespace EdB.PrepareCarefully {
         }
         public void AddImplantRecipe(RecipeDef recipe, List<UniqueBodyPart> parts) {
             if (parts != null && parts.Count > 0) {
-                List<UniqueBodyPart> partList;
-                if (implantRecipeLookup.TryGetValue(recipe, out partList)) {
+                // If we've already added the recipe than just add any new parts to the existing
+                // part list. Otherwise, add the implant option.
+                if (implantRecipeLookup.TryGetValue(recipe, out List<UniqueBodyPart> partList)) {
                     partList.AddRange(parts);
                 }
                 else {
-                    implantRecipes.Add(recipe);
+                    ImplantOptions.Add(new ImplantOption() {
+                        RecipeDef = recipe,
+                        HediffDef = recipe.addsHediff
+                    });
                     implantRecipeLookup.Add(recipe, parts.ToList());
                 }
             }
         }
-        public List<UniqueBodyPart> FindBodyPartsForImplantRecipe(RecipeDef recipeDef) {
-            List<UniqueBodyPart> partList;
-            if (implantRecipeLookup.TryGetValue(recipeDef, out partList)) {
+        public void AddImplantOption(ImplantOption option) {
+            ImplantOptions.Add(option);
+        }
+
+        public IEnumerable<UniqueBodyPart> FindBodyPartsForImplantRecipe(RecipeDef recipeDef) {
+            if (recipeDef == null) {
+                return Enumerable.Empty<UniqueBodyPart>();
+            }
+            if (implantRecipeLookup.TryGetValue(recipeDef, out List<UniqueBodyPart> partList)) {
                 return partList;
             }
             else {
-                return null;
+                return Enumerable.Empty<UniqueBodyPart>();
             }
         }
-        public List<RecipeDef> ImplantRecipes {
-            get {
-                return implantRecipes;
-            }
-        }
+
         public void Sort() {
             SortImplants();
             SortInjuries();
         }
         protected void SortImplants() {
-            implantRecipes.Sort((RecipeDef a, RecipeDef b) => {
-                return string.Compare(a.LabelCap.Resolve(), b.LabelCap.Resolve());
+            ImplantOptions.Sort((ImplantOption a, ImplantOption b) => {
+                string aLabel = a.RecipeDef?.LabelCap.Resolve() ?? a.HediffDef?.LabelCap ?? "";
+                string bLabel = b.RecipeDef?.LabelCap.Resolve() ?? b.HediffDef?.LabelCap ?? "";
+                return string.Compare(aLabel, bLabel);
             });
         }
         protected void SortInjuries() {
@@ -232,6 +310,11 @@ namespace EdB.PrepareCarefully {
                 return injuryOptions;
             }
         }
+        public IEnumerable<InjuryOption> SelectableInjuryOptions {
+            get {
+                return injuryOptions.Where(o => o.Selectable);
+            }
+        }
         public IEnumerable<BodyPartRecord> BodyPartsForInjury(InjuryOption option) {
             if (option.ValidParts == null || option.ValidParts.Count == 0) {
                 return SkinCoveredBodyParts.Select((UniqueBodyPart p) => { return p.Record; });
@@ -239,7 +322,7 @@ namespace EdB.PrepareCarefully {
             else {
                 List<BodyPartRecord> records = new List<BodyPartRecord>();
                 foreach (var part in option.ValidParts) {
-                    records.AddRange(FindBodyPartsForDef(part).ConvertAll(p => p.Record));
+                    records.AddRange(FindBodyPartsForDef(part).Select(p => p.Record));
                 }
                 return records;
             }

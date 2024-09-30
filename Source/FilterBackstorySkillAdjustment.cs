@@ -1,4 +1,4 @@
-﻿using RimWorld;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using Verse;
 
 namespace EdB.PrepareCarefully {
-    class FilterBackstorySkillAdjustment : Filter<Backstory> {
+    class FilterBackstorySkillAdjustment : Filter<BackstoryDef> {
         private int BonusOrPenalty {
             get;
             set;
@@ -26,20 +26,22 @@ namespace EdB.PrepareCarefully {
                 this.LabelShort = "EdB.PC.Dialog.Backstory.Filter.SkillBonus".Translate(this.SkillDef.LabelCap, bonusOrPenalty);
                 this.LabelFull = "EdB.PC.Dialog.Backstory.Filter.SkillBonusFull".Translate(this.SkillDef.LabelCap, bonusOrPenalty);
             }
-            this.FilterFunction = (Backstory backstory) => {
-                if (this.SkillDef != null && backstory.skillGainsResolved.ContainsKey(this.SkillDef)) {
-                    int value = backstory.skillGainsResolved[skillDef];
-                    if (bonusOrPenalty > 0) {
-                        return value >= bonusOrPenalty;
-                    }
-                    else {
-                        return value <= bonusOrPenalty;
-                    }
+            this.FilterFunction = (BackstoryDef backstory) => {
+                int value = backstory.skillGains.FindAll(g => {
+                    return g.skill.Equals(skillDef);
+                }).Select(g => g.amount).Sum();
+                if (value == 0) {
+                    return false;
                 }
-                return false;
+                else if (bonusOrPenalty > 0) {
+                    return value >= bonusOrPenalty;
+                }
+                else {
+                    return value <= bonusOrPenalty;
+                }
             };
         }
-        public override bool ConflictsWith(Filter<Backstory> filter) {
+        public override bool ConflictsWith(Filter<BackstoryDef> filter) {
             if (filter as FilterBackstorySkillAdjustment == null) {
                 return false;
             }

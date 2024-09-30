@@ -92,47 +92,6 @@ namespace EdB.PrepareCarefully {
                 }
             }
         }
-
-        public HairDef FindHairDef(string name) {
-            return DefDatabase<HairDef>.GetNamedSilentFail(name);
-        }
-
-        public Backstory FindBackstory(string name) {
-            return BackstoryDatabase.allBackstories.Values.ToList().Find((Backstory b) => {
-                return b.identifier.Equals(name);
-            });
-        }
-
-        public Trait FindTrait(string name, int degree) {
-            foreach (TraitDef def in DefDatabase<TraitDef>.AllDefs) {
-                if (!def.defName.Equals(name)) {
-                    continue;
-                }
-                List<TraitDegreeData> degreeData = def.degreeDatas;
-                int count = degreeData.Count;
-                if (count > 0) {
-                    for (int i = 0; i < count; i++) {
-                        if (degree == degreeData[i].degree) {
-                            Trait trait = new Trait(def, degreeData[i].degree, true);
-                            return trait;
-                        }
-                    }
-                }
-                else {
-                    return new Trait(def, 0, true);
-                }
-            }
-            return null;
-        }
-
-        public SkillDef FindSkillDef(Pawn pawn, string name) {
-            foreach (var skill in pawn.skills.skills) {
-                if (skill.def.defName.Equals(name)) {
-                    return skill.def;
-                }
-            }
-            return null;
-        }
     }
 }
 

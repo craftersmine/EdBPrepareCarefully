@@ -6,107 +6,30 @@ using UnityEngine;
 using Verse;
 
 namespace EdB.PrepareCarefully {
-    public class Implant : CustomBodyPart {
-        protected BodyPartRecord bodyPartRecord;
-
-        public string label = "";
-        public RecipeDef recipe = null;
-        protected Hediff hediff = null;
-
-        protected string tooltip;
+    public class Implant : CustomizedHediff {
 
         public Implant() {
         }
 
-        public override BodyPartRecord BodyPartRecord {
-            get {
-                return bodyPartRecord;
-            }
-            set {
-                bodyPartRecord = value;
-                tooltip = null;
-            }
-        }
-
-        public Hediff Hediff {
-            get => hediff;
-            set => hediff = value;
-        }
-
-        override public string ChangeName {
-            get {
-                return Label;
-            }
-        }
-
-        override public Color LabelColor {
-            get {
-                if (recipe.addsHediff != null) {
-                    return recipe.addsHediff.defaultLabelColor;
-                }
-                else {
-                    return Style.ColorText;
-                }
-            }
-        }
-
         public Implant(BodyPartRecord bodyPartRecord, RecipeDef recipe) {
             this.BodyPartRecord = bodyPartRecord;
-            this.recipe = recipe;
+            this.Recipe = recipe;
         }
 
-        public RecipeDef Recipe {
-            get {
-                return recipe;
-            }
-            set {
-                recipe = value;
-                tooltip = null;
-            }
-        }
+        public ImplantOption Option { get; set; }
+        public RecipeDef Recipe { get; set; }
+        public HediffDef HediffDef { get; set; }
+        public Hediff Hediff { get; set; }
+        public float Severity { get; set; } = 0f;
 
         public string Label {
             get {
-                if (recipe == null) {
-                    return "";
+                if (Recipe != null) {
+                    return Recipe?.addsHediff?.LabelCap ?? "";
                 }
-                return recipe.addsHediff.LabelCap;
-            }
-        }
-
-        public override bool Equals(System.Object obj) {
-            if (obj == null) {
-                return false;
-            }
-
-            Implant option = obj as Implant;
-            if ((System.Object)option == null) {
-                return false;
-            }
-
-            return (BodyPartRecord == option.BodyPartRecord) && (recipe == option.recipe);
-        }
-
-        public bool Equals(Implant option) {
-            if ((object)option == null) {
-                return false;
-            }
-
-            return (BodyPartRecord == option.BodyPartRecord) && (recipe == option.recipe);
-        }
-
-        public override int GetHashCode() {
-            unchecked {
-                int a = BodyPartRecord != null ? BodyPartRecord.GetHashCode() : 0;
-                int b = recipe != null ? recipe.GetHashCode() : 0;
-                return 31 * a + b;
-            }
-        }
-
-        public override void AddToPawn(CustomPawn customPawn, Pawn pawn) {
-            if (recipe != null && BodyPartRecord != null) {
-                this.hediff = HediffMaker.MakeHediff(recipe.addsHediff, pawn, BodyPartRecord);
-                pawn.health.AddHediff(hediff, BodyPartRecord, new DamageInfo?());
+                else {
+                    return "EdB.PC.Dialog.Implant.InstallImplantLabel".Translate(Option?.HediffDef?.label);
+                }
             }
         }
 
@@ -117,41 +40,27 @@ namespace EdB.PrepareCarefully {
                             || typeof(Hediff_MissingPart).IsAssignableFrom(Recipe.addsHediff.hediffClass))) {
                     return true;
                 }
+                else if (Option?.HediffDef?.organicAddedBodypart ?? false) {
+                    return true;
+                }
                 return false;
             }
         }
 
-        public override bool HasTooltip {
-            get {
-                return hediff != null;
-            }
+        public override bool Equals(object obj) {
+            return obj is Implant implant &&
+                   ReferenceEquals(BodyPartRecord, implant.BodyPartRecord) &&
+                   ReferenceEquals(HediffDef, implant.HediffDef) &&
+                   ReferenceEquals(Recipe, implant.Recipe)
+                   ;
         }
 
-        public override string Tooltip {
-            get {
-                if (tooltip == null) {
-                    InitializeTooltip();
-                }
-                return tooltip;
-            }
-        }
-
-        protected void InitializeTooltip() {
-            StringBuilder stringBuilder = new StringBuilder();
-            Hediff_Injury hediff_Injury = hediff as Hediff_Injury;
-            string damageLabel = hediff.SeverityLabel;
-            if (!hediff.Label.NullOrEmpty() || !damageLabel.NullOrEmpty() || !hediff.CapMods.NullOrEmpty<PawnCapacityModifier>()) {
-                stringBuilder.Append(hediff.LabelCap);
-                if (!damageLabel.NullOrEmpty()) {
-                    stringBuilder.Append(": " + damageLabel);
-                }
-                stringBuilder.AppendLine();
-                string tipStringExtra = hediff.TipStringExtra;
-                if (!tipStringExtra.NullOrEmpty()) {
-                    stringBuilder.AppendLine(tipStringExtra.TrimEndNewlines().Indented());
-                }
-            }
-            tooltip = stringBuilder.ToString();
+        public override int GetHashCode() {
+            var hashCode = 223280684;
+            hashCode = hashCode * -1521134295 + EqualityComparer<BodyPartRecord>.Default.GetHashCode(BodyPartRecord);
+            hashCode = hashCode * -1521134295 + EqualityComparer<HediffDef>.Default.GetHashCode(HediffDef);
+            hashCode = hashCode * -1521134295 + EqualityComparer<RecipeDef>.Default.GetHashCode(Recipe);
+            return hashCode;
         }
     }
 }

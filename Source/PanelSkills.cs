@@ -6,19 +6,28 @@ using System.Text;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
+
 namespace EdB.PrepareCarefully {
     public class PanelSkills : PanelBase {
-        public delegate void ResetSkillsHandler();
-        public delegate void ClearSkillsHandler();
-        public delegate void UpdateSkillLevelHandler(SkillDef skill, int level);
-        public delegate void UpdateSkillPassionHandler(SkillDef skill, Passion level);
+        public delegate void ResetSkillsButtonClickedHandler();
+        public delegate void ClearSkillsButtonClickedHandler();
+        public delegate void IncrementSkillButtonClickedHandler(SkillDef skill);
+        public delegate void DecrementSkillButtonClickedHandler(SkillDef skill);
+        public delegate void SkillBarClickedHandler(SkillDef skill, int value);
+        public delegate void PassionButtonClickedHandler(SkillDef skill);
 
-        public event ClearSkillsHandler SkillsCleared;
-        public event ResetSkillsHandler SkillsReset;
-        public event UpdateSkillLevelHandler SkillLevelUpdated;
-        public event UpdateSkillPassionHandler SkillPassionUpdated;
+        public event ClearSkillsButtonClickedHandler ClearSkillsButtonClicked;
+        public event ResetSkillsButtonClickedHandler ResetSkillsButtonClicked;
+        public event PassionButtonClickedHandler PassionButtonClicked;
+        public event IncrementSkillButtonClickedHandler IncrementSkillButtonClicked;
+        public event DecrementSkillButtonClickedHandler DecrementSkillButtonClicked;
+        public event SkillBarClickedHandler SkillBarClicked;
 
-        protected ScrollViewVertical scrollView = new ScrollViewVertical();
+        protected WidgetScrollViewVertical scrollView = new WidgetScrollViewVertical();
+        public ModState State { get; set; }
+        public ViewState ViewState { get; set; }
+        public ProviderPassions ProviderPassions { get; set; }
+
         public PanelSkills() {
         }
         public override string PanelHeader {
@@ -85,17 +94,18 @@ namespace EdB.PrepareCarefully {
             RectScrollView = new Rect(0, 0, RectScrollFrame.width, RectScrollFrame.height);
         }
 
-        protected override void DrawPanelContent(State state) {
-            base.DrawPanelContent(state);
+        protected override void DrawPanelContent() {
+            base.DrawPanelContent();
 
-            CustomPawn customPawn = state.CurrentPawn;
+            CustomizedPawn customizedPawn = ViewState.CurrentPawn;
+            Pawn pawn = customizedPawn.Pawn;
 
             // Clear button
             Style.SetGUIColorForButton(RectButtonClearSkills);
             GUI.DrawTexture(RectButtonClearSkills, Textures.TextureButtonClearSkills);
             if (Widgets.ButtonInvisible(RectButtonClearSkills, false)) {
                 SoundDefOf.Tick_Low.PlayOneShotOnCamera();
-                SkillsCleared();
+                ClearSkillsButtonClicked();
             }
             TooltipHandler.TipRegion(RectButtonClearSkills, "EdB.PC.Panel.Skills.ClearTip".Translate());
 
@@ -104,11 +114,11 @@ namespace EdB.PrepareCarefully {
             GUI.DrawTexture(RectButtonResetSkills, Textures.TextureButtonReset);
             if (Widgets.ButtonInvisible(RectButtonResetSkills, false)) {
                 SoundDefOf.Tick_Low.PlayOneShotOnCamera();
-                SkillsReset();
+                ResetSkillsButtonClicked?.Invoke();
             }
             TooltipHandler.TipRegion(RectButtonResetSkills, "EdB.PC.Panel.Skills.ResetTip".Translate());
 
-            int skillCount = customPawn.Pawn.skills.skills.Count;
+            int skillCount = customizedPawn.Pawn.skills.skills.Count;
             float rowHeight = 26;
             float height = rowHeight * skillCount;
             bool willScroll = height > RectScrollView.height;
@@ -120,9 +130,11 @@ namespace EdB.PrepareCarefully {
 
                 Rect rect;
                 Text.Font = GameFont.Small;
-                foreach (var skill in customPawn.Pawn.skills.skills) {
-                    SkillDef def = skill.def;
-                    bool disabled = skill.TotallyDisabled;
+                foreach (var skillRecord in pawn.skills.skills) {
+                    SkillDef def = skillRecord.def;
+                    // TODO: Evaluate the logic here
+                    //bool disabled = IsSkillDisabled(customizedPawn, skillRecord);
+                    bool disabled = skillRecord.TotallyDisabled;
 
                     // Draw the label.
                     GUI.color = Style.ColorText;
@@ -132,28 +144,15 @@ namespace EdB.PrepareCarefully {
 
                     // Draw the passion.
                     rect = RectPassion;
-                    rect.y = rect.y + cursor;
+                    rect.y += cursor;
                     if (!disabled) {
-                        Passion passion = customPawn.currentPassions[skill.def];
-                        Texture2D image;
-                        if (passion == Passion.Minor) {
-                            image = Textures.TexturePassionMinor;
-                        }
-                        else if (passion == Passion.Major) {
-                            image = Textures.TexturePassionMajor;
-                        }
-                        else {
-                            image = Textures.TexturePassionNone;
-                        }
-                        GUI.color = Color.white;
-                        GUI.DrawTexture(rect, image);
-                        if (Widgets.ButtonInvisible(rect, false)) {
-                            SoundDefOf.Tick_Tiny.PlayOneShotOnCamera();
-                            if (Event.current.button != 1) {
-                                IncreasePassion(skill);
-                            }
-                            else {
-                                DecreasePassion(skill);
+                        Texture2D image = GetPassionTextureForSkill(skillRecord);
+                        if (image != null) {
+                            GUI.color = Color.white;
+                            GUI.DrawTexture(rect, image);
+                            if (Widgets.ButtonInvisible(rect, false)) {
+                                SoundDefOf.Tick_Tiny.PlayOneShotOnCamera();
+                                PassionButtonClicked?.Invoke(skillRecord.def);
                             }
                         }
                     }
@@ -164,12 +163,12 @@ namespace EdB.PrepareCarefully {
                     if (willScroll) {
                         rect.width = rect.width - 16;
                     }
-                    DrawSkill(customPawn, skill, rect);
+                    DrawSkill(customizedPawn, skillRecord, rect);
 
                     // Handle the tooltip.
                     // TODO: Should cover the whole row, not just the skill bar rect.
-                    TooltipHandler.TipRegion(rect, new TipSignal(GetSkillDescription(skill),
-                        skill.def.GetHashCode() * 397945));
+                    TooltipHandler.TipRegion(rect, () => GetSkillDescription(skillRecord),
+                        (GetType().FullName + skillRecord?.def?.defName).GetHashCode());
 
                     if (!disabled) {
                         // Draw the decrement button.
@@ -185,7 +184,7 @@ namespace EdB.PrepareCarefully {
                         GUI.DrawTexture(rect, Textures.TextureButtonPrevious);
                         if (Widgets.ButtonInvisible(rect, false)) {
                             SoundDefOf.Tick_Tiny.PlayOneShotOnCamera();
-                            DecreaseSkill(customPawn, skill);
+                            DecreaseSkill(def);
                         }
 
                         // Draw the increment button.
@@ -201,7 +200,7 @@ namespace EdB.PrepareCarefully {
                         GUI.DrawTexture(rect, Textures.TextureButtonNext);
                         if (Widgets.ButtonInvisible(rect, false)) {
                             SoundDefOf.Tick_Tiny.PlayOneShotOnCamera();
-                            IncreaseSkill(customPawn, skill);
+                            IncreaseSkill(def);
                         }
                     }
 
@@ -217,20 +216,48 @@ namespace EdB.PrepareCarefully {
             GUI.color = Color.white;
         }
 
+        public Texture2D GetPassionTextureForSkill(SkillRecord skillRecord) {
+            if (skillRecord == null) {
+                return null;
+            }
+            return ProviderPassions.TextureForPassion(skillRecord.passion);
+        }
+
         public static void FillableBar(Rect rect, float fillPercent, Texture2D fillTex) {
             rect.width *= fillPercent;
             GUI.DrawTexture(rect, fillTex);
         }
 
-        private void DrawSkill(CustomPawn customPawn, SkillRecord skill, Rect rect) {
+        public static bool IsSkillDisabled(CustomizedPawn customizedPawn, SkillRecord skill) {
+            if (skill.TotallyDisabled) {
+                return true;
+            }
+            // TODO: Do we need to look at life stages to figure this out?
+            if (customizedPawn.Pawn.DevelopmentalStage == DevelopmentalStage.Newborn || customizedPawn.Pawn.DevelopmentalStage == DevelopmentalStage.Baby) {
+                return true;
+            }
+            return false;
+        }
+
+        private void DrawSkill(CustomizedPawn customizedPawn, SkillRecord skill, Rect rect) {
             int level = skill.Level;
-            bool disabled = skill.TotallyDisabled;
+
+            bool disabled = IsSkillDisabled(customizedPawn, skill);
             if (!disabled) {
                 float barSize = (level > 0 ? (float)level : 0) / 20f;
                 FillableBar(rect, barSize, Textures.TextureSkillBarFill);
 
-                int baseLevel = customPawn.GetSkillModifier(skill.def);
-                float baseBarSize = (baseLevel > 0 ? (float)baseLevel : 0) / 20f;
+                int minimumLevel = 0;
+                if (State.CachedSkillGains.TryGetValue(customizedPawn, out var gains)) {
+                    if (gains.TryGetValue(skill.def, out var gain)) {
+                        minimumLevel = gain;
+                        if (minimumLevel < 0) {
+                            minimumLevel = 0;
+                        }
+                    }
+                }
+
+                float baseBarSize = (minimumLevel > 0 ? (float)minimumLevel : 0) / 20f;
                 FillableBar(rect, baseBarSize, Textures.TextureSkillBarFill);
 
                 GUI.color = new Color(0.25f, 0.25f, 0.25f);
@@ -253,7 +280,7 @@ namespace EdB.PrepareCarefully {
                         value = Mathf.CeilToInt(x / rect.width * 20f);
                     }
                     SoundDefOf.Tick_Tiny.PlayOneShotOnCamera();
-                    SetSkillLevel(customPawn, skill, value);
+                    SetSkillLevel(skill.def, value);
                 }
             }
 
@@ -273,73 +300,26 @@ namespace EdB.PrepareCarefully {
             Text.Anchor = TextAnchor.UpperLeft;
         }
 
-        // EdB: Copy of private static SkillUI.GetSkillDescription().
         private static string GetSkillDescription(SkillRecord sk) {
-            StringBuilder stringBuilder = new StringBuilder();
-            if (sk.TotallyDisabled) {
-                stringBuilder.Append("DisabledLower".Translate().CapitalizeFirst());
+            try {
+                return ReflectionUtil.InvokeNonPublicStaticMethod<string>(typeof(SkillUI), "GetSkillDescription", new object[] { sk }) ?? "";
             }
-            else {
-                stringBuilder.AppendLine(string.Concat(new object[] {
-                            "Level".Translate(),
-                            " ",
-                            sk.Level,
-                            ": ",
-                            sk.LevelDescriptor
-                        }));
-                stringBuilder.Append("Passion".Translate() + ": ");
-                switch (sk.passion) {
-                    case Passion.None:
-                        stringBuilder.Append("PassionNone".Translate("0.3"));
-                        break;
-                    case Passion.Minor:
-                        stringBuilder.Append("PassionMinor".Translate("1.0"));
-                        break;
-                    case Passion.Major:
-                        stringBuilder.Append("PassionMajor".Translate("1.5"));
-                        break;
-                }
-            }
-            stringBuilder.AppendLine();
-            stringBuilder.AppendLine();
-            stringBuilder.Append(sk.def.description);
-            return stringBuilder.ToString();
-        }
-
-        protected void SetSkillLevel(CustomPawn pawn, SkillRecord record, int value) {
-            pawn.SetSkillLevel(record.def, value);
-        }
-
-        protected void IncreaseSkill(CustomPawn pawn, SkillRecord record) {
-            pawn.IncrementSkillLevel(record.def);
-        }
-
-        protected void DecreaseSkill(CustomPawn pawn, SkillRecord record) {
-            pawn.DecrementSkillLevel(record.def);
-        }
-
-        protected void IncreasePassion(SkillRecord record) {
-            if (record.passion == Passion.None) {
-                SkillPassionUpdated(record.def, Passion.Minor);
-            }
-            else if (record.passion == Passion.Minor) {
-                SkillPassionUpdated(record.def, Passion.Major);
-            }
-            else if (record.passion == Passion.Major) {
-                SkillPassionUpdated(record.def, Passion.None);
+            catch (Exception) {
+                Logger.Warning("There was an error when trying to get a skill description tooltip for skill " + sk?.def?.defName);
+                return "";
             }
         }
 
-        protected void DecreasePassion(SkillRecord record) {
-            if (record.passion == Passion.None) {
-                SkillPassionUpdated(record.def, Passion.Major);
-            }
-            else if (record.passion == Passion.Minor) {
-                SkillPassionUpdated(record.def, Passion.None);
-            }
-            else if (record.passion == Passion.Major) {
-                SkillPassionUpdated(record.def, Passion.Minor);
-            }
+        protected void SetSkillLevel(SkillDef skillDef, int value) {
+            SkillBarClicked?.Invoke(skillDef, value);
+        }
+
+        protected void IncreaseSkill(SkillDef skillDef) {
+            IncrementSkillButtonClicked?.Invoke(skillDef);
+        }
+
+        protected void DecreaseSkill(SkillDef skillDef) {
+            DecrementSkillButtonClicked?.Invoke(skillDef);
         }
         
         public void ScrollToTop() {

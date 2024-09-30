@@ -20,6 +20,8 @@ namespace EdB.PrepareCarefully {
         protected Rect RectLastName;
         protected Rect RectRandomize;
         protected Rect RectInfo;
+        public ModState State { get; set; }
+        public ViewState ViewState { get; set; }
 
         public override void Resize(Rect rect) {
             base.Resize(rect);
@@ -50,52 +52,92 @@ namespace EdB.PrepareCarefully {
             // Shift the info button to the left a bit to making the spacing look better.
             RectInfo.x -= 6;
         }
-        protected override void DrawPanelContent(State state) {
-            CustomPawn customPawn = state.CurrentPawn;
+        protected override void DrawPanelContent() {
+            CustomizedPawn customizedPawn = ViewState.CurrentPawn;
+            Pawn pawn = customizedPawn?.Pawn;
+            if (customizedPawn == null) {
+                Logger.Debug("customizedPawn was null");
+                return;
+            }
+            if (pawn == null) {
+                Logger.Debug("pawn was null");
+                return;
+            }
+
             Text.Anchor = TextAnchor.UpperLeft;
             GUI.color = Color.white;
 
             Style.SetGUIColorForButton(RectInfo);
             GUI.DrawTexture(RectInfo, Textures.TextureButtonInfo);
             if (Widgets.ButtonInvisible(RectInfo)) {
-                Find.WindowStack.Add((Window)new Dialog_InfoCard(customPawn.Pawn));
+                Find.WindowStack.Add((Window)new Dialog_InfoCard(pawn));
             }
             GUI.color = Color.white;
 
-            string first = customPawn.FirstName;
-            string nick = customPawn.NickName;
-            string last = customPawn.LastName;
-            string text;
-            GUI.SetNextControlName("PrepareCarefullyFirst");
-            text = Widgets.TextField(RectFirstName, first);
-            if (text != first) {
-                FirstNameUpdated(text);
+            string first = "";
+            string nick = "";
+            string last = "";
+            NameTriple nameTriple = pawn.Name as NameTriple;
+            NameSingle nameSingle = pawn.Name as NameSingle;
+            float x = RectFirstName.x;
+            if (nameTriple != null) {
+                first = nameTriple.First;
+                nick = nameTriple.Nick;
+                last = nameTriple.Last;
             }
-            if (nick == first || nick == last) {
-                GUI.color = new Color(1, 1, 1, 0.5f);
+            else if (nameSingle != null) {
+                nick = (pawn.Name as NameSingle).Name;
             }
-            GUI.SetNextControlName("PrepareCarefullyNick");
-            text = Widgets.TextField(RectNickName, nick);
-            if (text != nick) {
-                NickNameUpdated(text);
+
+            float randomizeButtonOffset = RectRandomize.x - RectLastName.xMax;
+            float randomizeButtonX = RectLastName.xMax + randomizeButtonOffset;
+            if (nameTriple != null) {
+                string text;
+                GUI.SetNextControlName("PrepareCarefullyFirst");
+                text = Widgets.TextField(RectFirstName, first);
+                if (text != first && FirstNameUpdated != null) {
+                    FirstNameUpdated?.Invoke(text);
+                }
+                if (nick == first || nick == last) {
+                    GUI.color = new Color(1, 1, 1, 0.5f);
+                }
+                GUI.SetNextControlName("PrepareCarefullyNick");
+                text = Widgets.TextField(RectNickName, nick);
+                if (text != nick && NickNameUpdated != null) {
+                    NickNameUpdated?.Invoke(text);
+                }
+                GUI.color = Color.white;
+                GUI.SetNextControlName("PrepareCarefullyLast");
+                text = Widgets.TextField(RectLastName, last);
+                if (text != last && LastNameUpdated != null) {
+                    LastNameUpdated?.Invoke(text);
+                }
+                TooltipHandler.TipRegion(RectFirstName, "FirstNameDesc".Translate());
+                TooltipHandler.TipRegion(RectNickName, "ShortIdentifierDesc".Translate());
+                TooltipHandler.TipRegion(RectLastName, "LastNameDesc".Translate());
             }
-            GUI.color = Color.white;
-            GUI.SetNextControlName("PrepareCarefullyLast");
-            text = Widgets.TextField(RectLastName, last);
-            if (text != last) {
-                LastNameUpdated(text);
+            else if (nameSingle != null) {
+                string text;
+                GUI.SetNextControlName("PrepareCarefullyNick");
+                text = Widgets.TextField(RectFirstName, nick);
+                if (text != nick && NickNameUpdated != null) {
+                    NickNameUpdated?.Invoke(text);
+                }
+                GUI.color = Color.white;
+                TooltipHandler.TipRegion(RectFirstName, "ShortIdentifierDesc".Translate());
+                randomizeButtonX = RectFirstName.xMax + randomizeButtonOffset;
             }
-            TooltipHandler.TipRegion(RectFirstName, "FirstNameDesc".Translate());
-            TooltipHandler.TipRegion(RectNickName, "ShortIdentifierDesc".Translate());
-            TooltipHandler.TipRegion(RectLastName, "LastNameDesc".Translate());
 
             // Random button
-            Style.SetGUIColorForButton(RectRandomize);
-            GUI.DrawTexture(RectRandomize, Textures.TextureButtonRandom);
-            if (Widgets.ButtonInvisible(RectRandomize, false)) {
+            Rect randomizeRect = new Rect(randomizeButtonX, RectRandomize.y, RectRandomize.width, RectRandomize.height);
+            Style.SetGUIColorForButton(randomizeRect);
+            GUI.DrawTexture(randomizeRect, Textures.TextureButtonRandom);
+            if (Widgets.ButtonInvisible(randomizeRect, false)) {
                 SoundDefOf.Tick_Low.PlayOneShotOnCamera();
                 GUI.FocusControl(null);
-                NameRandomized();
+                if (LastNameUpdated != null) {
+                    NameRandomized?.Invoke();
+                }
             }
         }
 

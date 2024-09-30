@@ -26,11 +26,8 @@ namespace EdB.PrepareCarefully {
             labels.Add("Fat", "EdB.PC.Pawn.BodyType.Heavyset".Translate());
             labels.Add("Oval", "EdB.PC.Pawn.BodyType.Oval".Translate());
         }
-        public ProviderAlienRaces AlienRaceProvider {
+        public ProviderAlienRaces ProviderAlienRaces {
             get; set;
-        }
-        public List<BodyTypeDef> GetBodyTypesForPawn(CustomPawn pawn) {
-            return GetBodyTypesForPawn(pawn.Pawn);
         }
         public List<BodyTypeDef> GetBodyTypesForPawn(Pawn pawn) {
             return GetBodyTypesForPawn(pawn.def, pawn.gender);
@@ -50,7 +47,7 @@ namespace EdB.PrepareCarefully {
                     return label;
                 }
                 else {
-                    return "EdB.PC.Pawn.BodyType.Unnamed".Translate();
+                    return bodyType.defName;
                 }
             }
             else {
@@ -102,7 +99,7 @@ namespace EdB.PrepareCarefully {
 
         protected OptionsBodyType InitializeAlienRaceBodyTypes(ThingDef def) {
             OptionsBodyType result = new OptionsBodyType();
-            AlienRace alienRace = AlienRaceProvider.GetAlienRace(def);
+            AlienRace alienRace = ProviderAlienRaces.GetAlienRace(def);
             if (alienRace == null) {
                 return null;
             }
@@ -123,62 +120,9 @@ namespace EdB.PrepareCarefully {
 
             if (result.MaleBodyTypes.Count == 0 && result.FemaleBodyTypes.Count == 0) {
                 result = InitializeNonModdedDefaultHumanlikeBodyTypes();
-                //if (alienRace.GraphicsPathForBodyTypes != null && !defaultBodyTypesPaths.Contains(alienRace.GraphicsPathForBodyTypes)) {
-                //    result = InitializeHumanlikeBodyTypes();
-                //    result.MaleBodyTypes = result.MaleBodyTypes.Where(d => ValidateBodyTypeForAlienRace(alienRace, d)).ToList();
-                //    result.FemaleBodyTypes = result.FemaleBodyTypes.Where(d => ValidateBodyTypeForAlienRace(alienRace, d)).ToList();
-                //}
-                //else {
-                //    result = InitializeNonModdedDefaultHumanlikeBodyTypes();
-                //}
             }
-
-            /*
-            // TODO: Is this right?
-            // Was this trying to guard against mod developers only defining male and not female body types?
-            if (result.MaleBodyTypes.Count == 0 && result.FemaleBodyTypes.Count > 0) {
-                result.MaleBodyTypes = result.FemaleBodyTypes;
-            }
-            else if (result.FemaleBodyTypes.Count == 0 && result.MaleBodyTypes.Count > 0) {
-                result.FemaleBodyTypes = result.MaleBodyTypes;
-            }
-
-            if (result.MaleBodyTypes.Count == 0 && result.FemaleBodyTypes.Count == 0) {
-                result = InitializeHumanlikeBodyTypes();
-            }
-            */
 
             return result;
         }
-
-        // TODO: Evaluate this.  Disabled for now, but this method looks in the alien body graphics path for the specified
-        // body def.  This was to try to guard against the addition of modded BodyTypeDefs that work for vanilla, but that
-        // the alien race mod maker has not provided a texture for.
-        /// Instead of calling this, we're just assigning only vanilla body type defs for alien races without explicit body types
-        /// and with a custom graphic path for body textures.
-        //protected bool ValidateBodyTypeForAlienRace(AlienRace race, BodyTypeDef def) {
-        //    string path = race.GraphicsPathForBodyTypes + "/" + def.bodyNakedGraphicPath.Split('/').Last();
-        //    path = path.Replace("//", "/");
-        //    path += "_south";
-        //    Logger.Debug("ValidateBodyTypeForRace(" + race + ", " + def.defName + "), path = " + path);
-        //    try {
-        //        // TODO: Figure out which mod we're dealing with and only go through that content pack.
-        //        List<ModContentPack> modsListForReading = LoadedModManager.RunningModsListForReading;
-        //        for (int index = modsListForReading.Count - 1; index >= 0; --index) {
-        //            ModContentPack pack = modsListForReading[index];
-        //            Logger.Debug("Looking for path in " + pack.Identifier);
-        //            var contentHolder = pack.GetContentHolder<Texture2D>();
-        //            if (contentHolder.contentList.ContainsKey(path)) {
-        //                Logger.Warning("Found it");
-        //                return true;
-        //            }
-        //        }
-        //        Logger.Debug("Didn't find it");
-        //        return false;
-        //    } 
-        //    catch (Exception) {
-        //        return false;
-        //    }
-        //}
     }
 }

@@ -15,18 +15,12 @@ namespace EdB.PrepareCarefully {
         protected OptionsHair noHair = new OptionsHair();
         public ProviderHair() {
         }
-        public ProviderAlienRaces AlienRaceProvider {
+        public ProviderAlienRaces ProviderAlienRaces {
             get; set;
-        }
-        public List<HairDef> GetHairs(CustomPawn pawn) {
-            return GetHairs(pawn.Pawn.def, pawn.Gender);
         }
         public List<HairDef> GetHairs(ThingDef raceDef, Gender gender) {
             OptionsHair hairs = GetHairsForRace(raceDef);
             return hairs.GetHairs(gender);
-        }
-        public OptionsHair GetHairsForRace(CustomPawn pawn) {
-            return GetHairsForRace(pawn.Pawn.def);
         }
         public OptionsHair GetHairsForRace(ThingDef raceDef) {
             OptionsHair hairs;
@@ -48,7 +42,7 @@ namespace EdB.PrepareCarefully {
             }
         }
         protected OptionsHair InitializeHairs(ThingDef raceDef) {
-            AlienRace alienRace = AlienRaceProvider.GetAlienRace(raceDef);
+            AlienRace alienRace = ProviderAlienRaces.GetAlienRace(raceDef);
             if (alienRace == null) {
                 return HumanlikeHairs;
             }
@@ -109,22 +103,6 @@ namespace EdB.PrepareCarefully {
             // all hair def (both alien and non-alien) in the list of available hairs for non-aliens.
             // TODO: Implement filtering in the hair selection to make it easier to find appropriate hairs when there
             // are a lot of mods that add hairs.
-            /*
-            IEnumerable<ThingDef> alienRaces = DefDatabase<ThingDef>.AllDefs.Where((ThingDef def) => {
-                return def.race != null && ProviderAlienRaces.IsAlienRace(def);
-            });
-            foreach (var alienRaceDef in alienRaces) {
-                AlienRace alienRace = AlienRaceProvider.GetAlienRace(alienRaceDef);
-                if (alienRace == null) {
-                    continue;
-                }
-                if (alienRace.HairTags != null) {
-                    foreach (var tag in alienRace.HairTags) {
-                        nonHumanHairTags.Add(tag);
-                    }
-                }
-            }
-            */
             OptionsHair result = new OptionsHair();
             foreach (HairDef hairDef in DefDatabase<HairDef>.AllDefs.Where((HairDef def) => {
                 foreach (var tag in def.styleTags) {

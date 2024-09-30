@@ -1,5 +1,199 @@
  _____________________________________________________________________________
  
+   Version 1.5.12
+ _____________________________________________________________________________
+
+ - Added support for the additional passions in Vanilla Skills Expanded
+ - Bug fixes:
+   - Fixed problems with temporary pawns in the Relationships tab
+
+ _____________________________________________________________________________
+ 
+   Version 1.5.11
+ _____________________________________________________________________________
+
+ - Added some missing implants (tentacles, etc.)
+ - Bug fixes:
+   - Pawns can no longer add implants that are mutant-specific or restricted
+     if their mutant type does not match
+   - Fixed some errors when trying to open the Bionics and Implants dialog
+     when using some mods
+   - Removed the implant level slider when the implant only has one level
+
+ _____________________________________________________________________________
+ 
+   Version 1.5.10
+ _____________________________________________________________________________
+
+ - Fixed missing animals from the equipment selection panel
+
+ _____________________________________________________________________________
+ 
+   Version 1.5.9
+ _____________________________________________________________________________
+
+ - Fixed problem loading older preset save files
+
+ _____________________________________________________________________________
+ 
+   Version 1.5.8
+ _____________________________________________________________________________
+
+ - Added support for Mechanitor implants in the Health panel's Implants and
+   Bionics dialog
+ - Added Mechanoid options to the Equipment Tab 
+ - Bug fixes:
+   - Fixed issue where sibling relationships were sometimes lost when loading
+     from a preset
+   - Fixed issue where non-parent/child relationships between starting pawns
+     and hidden/world pawns were removed when initializing the game
+
+ _____________________________________________________________________________
+ 
+   Version 1.5.7
+ _____________________________________________________________________________
+
+ - Abilities are now sorted by name in their dialog
+ - Bug fixes:
+   - Fixed an error that happened in certain cases when trying to change a
+     single-word name on a pawn loaded from a preset
+   - Fixed an error where implants that can be attached to a body part group
+     (instead of to a specific body part) were not being loaded correctly from
+     saved presets
+   - Fixed some issues with the Appearance panel when randomizing pawns
+
+ _____________________________________________________________________________
+ 
+   Version 1.5.6
+ _____________________________________________________________________________
+
+ - Bug fixes:
+   - When loading xenotypes from presets, genes are no longer regenerated
+     for a xenotype randomly. This was causing some genes to be lost when
+     loading a standard xenotype from a preset
+   - Removing all apparel from a pawn no longer blocks you from then adding
+     apparel back onto the pawn
+   - Pawns that use single-word names no longer break when loading from preset
+     and now are displayed properly in the name panel
+   - Mutants can now be saved and loaded from presets
+   - The favorite color option is hidden for pawns that should not have a
+     favorite color
+
+ _____________________________________________________________________________
+ 
+   Version 1.5.5
+ _____________________________________________________________________________
+
+ - Bug fixes:
+   - Fixed loading xenotypes from presets so that fur definitions no longer
+     break pawn rendering in a way that pawns become invisible
+   - Fixed the way that traits are refreshed to stop deleting traits before
+     adding them back. This avoids a problem where genes associated with a
+     trait were unexpectedly removed
+   - Fixed loading xenotypes so that the correct gene is chosen between
+     multiple genes for the same appearance type
+   - Traits added by xenotypes are no longer deleted when randomizing traits
+   - Traits added by xenotypes can no longer be deleted--to avoid the
+     the associated gene from also being deleted
+   - Suppressed traits can be deleted
+
+ _____________________________________________________________________________
+ 
+   Version 1.5.4
+ _____________________________________________________________________________
+
+ - In the Apparel dialog, changing a value for an apparel item that a pawn is
+   already wearing now updates the apparel immediately without needing to
+   click the "Update" button
+ - Added color swatches for Favorite Color and Ideo to the Apparel dialog
+ - Added a Rotate View button to the Apparel dialog
+ - Pawn compatibility is displayed in the Other Relationships dialog
+ - Bug fixes:
+   - The Ideo panel is now hidden for pawns that should not have an ideo
+   - Disabled skills now update properly when changing backstories or traits
+   - Relationships for randomized pawns are now deleted instead of swapped for
+     the new random pawn
+
+ _____________________________________________________________________________
+ 
+   Version 1.5.3
+ _____________________________________________________________________________
+
+ - Added a style selection dropdown to the Apparel dialog
+ - Added an indicator to show when a pawn is not allowed to add apparel
+ - Bug fixes:
+   - Removed spawn type options for books and schematics so that they can only
+     "spawn with" your pawns to avoid uninitialized books
+   - Fixed the positioning of the Appearance Panel dialog
+   - The Psylink hediff is now saved with the correct level
+   - Fixed a problem where trying to move a pawn from the colony list to the
+     world list would add a duplicate of the pawn to the colony list instead
+   - Fixed a problem where saving a preset would not save all pawn values
+     correctly, even though saving just the character would
+   - Fixed problems when changing and loading skill levels for pawns with an
+     aptitude for a skill
+
+ _____________________________________________________________________________
+ 
+   Version 1.5.2
+ _____________________________________________________________________________
+
+ - Bug fixes:
+   - Fixed the randomize button in the name panel
+   - Bionics/implants are applied from save files again
+   - Custom xenotypes are loaded from save files again
+   - Fixed a problem where the color selector was not visible in the Apparel
+     dialog in some cases
+   - Fixed a problem where abilities were written to the save file twice
+   - Fixed the skill clear and reset buttons 
+
+ _____________________________________________________________________________
+ 
+   Version 1.5.1
+ _____________________________________________________________________________
+
+ - Compatibility for 1.5
+ - Now requires the Harmony mod
+ - Added a new larger layout
+ - Added an Apparel panel to better support the way apparel works in the game
+ - Added panels for Possessions, Titles and Abilities
+ - Removed the Faction panel
+ - Moved favorite color selection out of its own panel and into the Backstory
+   panel
+ - Added new dropdown filters and a text search filter to the equipment
+   selection panel
+ - Added options for quality, hit points and spawn type to equipment selection
+   panel
+ - Reworked the way that pawns are modified and added to the world
+
+ _____________________________________________________________________________
+ 
+   Version 1.4.3
+ _____________________________________________________________________________
+
+ - Fixed a problem initializing the mod when faction labels are null. This
+   fixes compatibility with a number of other mods.
+
+ _____________________________________________________________________________
+ 
+   Version 1.4.2
+ _____________________________________________________________________________
+
+ - Fixed issue with custom xenotypes 
+
+ _____________________________________________________________________________
+ 
+   Version 1.4.1
+ _____________________________________________________________________________
+
+ - Compatibility for 1.4 and Biotech 
+   - Added Xenotype panel
+   - Added "Days" field to age panel
+   - Added dropdown options to the randomize panel
+   - Added starting pawn possessions to the equipment list
+
+ _____________________________________________________________________________
+ 
    Version 1.3.12
  _____________________________________________________________________________
 
@@ -14,7 +208,7 @@
  _____________________________________________________________________________
 
  - Fixed issue with missing relationships when loading presets.
- - Fixed apparel for alien race mods where the alien race uses restricted
+ - Fixed apparel for alien race mods where the alien race uses restricted   
    apparel.
  
  _____________________________________________________________________________

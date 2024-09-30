@@ -1,4 +1,4 @@
-﻿using RimWorld;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,8 @@ using Verse;
 
 namespace EdB.PrepareCarefully {
     public class PawnLayerAlienAddon : PawnLayer {
+        public ManagerPawns PawnManager { get; set; }
+
         private List<PawnLayerOption> options = new List<PawnLayerOption>();
         private List<Color> swatches;
         private ColorSelectorType colorSelectorType = ColorSelectorType.None;
@@ -21,14 +23,8 @@ namespace EdB.PrepareCarefully {
                 options = value;
             }
         }
-        public bool Hair {
-            get;
-            set;
-        }
-        public bool Skin {
-            get;
-            set;
-        }
+        public bool Hair { get; set; }
+        public bool Skin { get; set; }
         public override ColorSelectorType ColorSelectorType {
             get {
                 return colorSelectorType;
@@ -45,17 +41,16 @@ namespace EdB.PrepareCarefully {
                 swatches = value;
             }
         }
-        public AlienRaceBodyAddon AlienAddon {
-            get;
-            set;
-        }
+        public List<PawnLayerOption> LinkedLayers { get; set; }
 
-        public override bool IsOptionSelected(CustomPawn pawn, PawnLayerOption option) {
+        public AlienRaceBodyAddon AlienAddon { get; set; }
+
+        public override bool IsOptionSelected(CustomizedPawn pawn, PawnLayerOption option) {
             PawnLayerOptionAlienAddon addonOption = option as PawnLayerOptionAlienAddon;
             if (addonOption == null) {
                 return false;
             }
-            if (pawn.AlienRace != null) {
+            if (pawn.Customizations.AlienRace != null) {
                 ThingComp alienComp = pawn.Pawn.AllComps.FirstOrDefault((ThingComp comp) => {
                     return (comp.GetType().Name == "AlienComp");
                 });
@@ -79,32 +74,9 @@ namespace EdB.PrepareCarefully {
             return false;
         }
 
-        private int? GetSelectedVariant(CustomPawn pawn, int variantIndex) {
-            if (pawn.AlienRace == null) {
-                return null;
-            }
-            ThingComp alienComp = pawn.Pawn.AllComps.FirstOrDefault((ThingComp comp) => {
-                return (comp.GetType().Name == "AlienComp");
-            });
-            if (alienComp == null) {
-                return null;
-            }
-            FieldInfo variantsField = ReflectionUtil.GetPublicField(alienComp, "addonVariants");
-            if (variantsField == null) {
-                return null;
-            }
-            List<int> variants = null;
-            try {
-                variants = (List<int>)variantsField.GetValue(alienComp);
-            }
-            catch (Exception) {
-                return null;
-            }
-            return variants[variantIndex];
-        }
 
-        public override int? GetSelectedIndex(CustomPawn pawn) {
-            if (pawn.AlienRace == null) {
+        public override int? GetSelectedIndex(CustomizedPawn pawn) {
+            if (pawn.Customizations.AlienRace == null) {
                 return null;
             }
             ThingComp alienComp = pawn.Pawn.AllComps.FirstOrDefault((ThingComp comp) => {
@@ -127,7 +99,7 @@ namespace EdB.PrepareCarefully {
             return variants[AlienAddon.VariantIndex];
         }
 
-        public override PawnLayerOption GetSelectedOption(CustomPawn pawn) {
+        public override PawnLayerOption GetSelectedOption(CustomizedPawn pawn) {
             int? selectedIndex = GetSelectedIndex(pawn);
             if (selectedIndex == null) {
                 return null;
@@ -137,52 +109,16 @@ namespace EdB.PrepareCarefully {
             }
         }
 
-        public override void SelectOption(CustomPawn pawn, PawnLayerOption option) {
-            PawnLayerOptionAlienAddon addonOption = option as PawnLayerOptionAlienAddon;
-            if (addonOption == null) {
-                return;
-            }
-            if (pawn.AlienRace != null) {
-                ThingComp alienComp = pawn.Pawn.AllComps.FirstOrDefault((ThingComp comp) => {
-                    return (comp.GetType().Name == "AlienComp");
-                });
-                if (alienComp == null) {
-                    return;
-                }
-                FieldInfo variantsField = ReflectionUtil.GetPublicField(alienComp, "addonVariants");
-                if (variantsField == null) {
-                    return;
-                }
-                List<int> variants = null;
-                try {
-                    variants = (List<int>)variantsField.GetValue(alienComp);
-                }
-                catch (Exception) {
-                    return;
-                }
-                variants[AlienAddon.VariantIndex] = addonOption.Index;
-                pawn.MarkPortraitAsDirty();
-            }
-        }
-        
-        public override Color GetSelectedColor(CustomPawn pawn) {
+
+        public override Color GetSelectedColor(CustomizedPawn pawn) {
             if (Hair) {
-                return pawn.HairColor;
+                return pawn.Pawn.story.HairColor;
             }
             else if (Skin) {
-                return pawn.SkinColor;
+                return pawn.Pawn.story.SkinColor;
             }
             else {
                 return Color.white;
-            }
-        }
-
-        public override void SelectColor(CustomPawn pawn, Color color) {
-            if (Hair) {
-                pawn.HairColor = color;
-            }
-            else if (Skin) {
-                pawn.SkinColor = color;
             }
         }
 

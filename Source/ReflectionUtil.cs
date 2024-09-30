@@ -128,6 +128,16 @@ namespace EdB.PrepareCarefully {
             return info;
         }
 
+        public static T InvokeNonPublicStaticMethod<T>(Type type, string name, object[] arguments) {
+            MethodInfo info = type.GetMethod(name, BindingFlags.NonPublic | BindingFlags.Static);
+            if (info == null) {
+                Logger.Warning("Could not find the static method " + type.Name + "." + name + " via reflection");
+                return default(T);
+            }
+            object result = info.Invoke(null, arguments);
+            return (T)result;
+        }
+
         public static T GetNonPublicStatic<T>(Type type, string name) {
             FieldInfo field = GetNonPublicStaticField(type, name);
             if (field == null) {
@@ -176,6 +186,29 @@ namespace EdB.PrepareCarefully {
             }
             else {
                 Logger.Warning("Could not cast the value from field {" + name + "} whose type is {" + o.GetType().FullName + "} to the specified type {" + typeof(T).FullName + "}");
+            }
+            return default(T);
+        }
+
+        public static T GetStaticFieldValue<T>(Type target, string name) {
+            if (target == null) {
+                Logger.Warning("Could not get value from static field {" + name + "} using reflection because the target type was null");
+                return default(T);
+            }
+            FieldInfo field = Field(target, name);
+            if (field == null) {
+                Logger.Warning("Could not get value from static field {" + name + "} using reflection because we could not find the field on the target type");
+                return default(T);
+            }
+            object o = field.GetValue(null);
+            if (o == null) {
+                return default(T);
+            }
+            if (typeof(T).IsAssignableFrom(o.GetType())) {
+                return (T)field.GetValue(target);
+            }
+            else {
+                Logger.Warning("Could not cast the value from static field {" + name + "} whose type is {" + o.GetType().FullName + "} to the specified type {" + typeof(T).FullName + "}");
             }
             return default(T);
         }

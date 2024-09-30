@@ -1,4 +1,4 @@
-﻿using RimWorld;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,17 +7,7 @@ using Verse;
 
 namespace EdB.PrepareCarefully {
     public class PawnLayerOptionHead : PawnLayerOption {
-        public override string Label {
-            get {
-                return HeadType.Label;
-            }
-            set {
-                throw new NotImplementedException();
-            }
-        }
-        public CustomHeadType HeadType {
-            get;
-            set;
-        }
+        public override string Label { get; set; }
+        public HeadTypeDef HeadType { get; set; }
     }
 }

@@ -39,10 +39,10 @@ namespace EdB.PrepareCarefully {
 
         protected WidgetTable<Option> table;
         protected List<Option> options = new List<Option>();
-        protected CustomPawn pawn = null;
+        protected CustomizedPawn pawn = null;
         protected bool disabledOptionsDirtyFlag = false;
 
-        public DialogAbilities(CustomPawn pawn) {
+        public DialogAbilities(CustomizedPawn pawn) {
             this.closeOnCancel = true;
             this.doCloseX = true;
             this.absorbInputAroundWindow = true;
@@ -51,7 +51,7 @@ namespace EdB.PrepareCarefully {
             Resize();
         }
 
-        protected void InitializeWithPawn(CustomPawn pawn) {
+        protected void InitializeWithPawn(CustomizedPawn pawn) {
             this.pawn = pawn;
             InitializeOptions();
         }
@@ -60,13 +60,13 @@ namespace EdB.PrepareCarefully {
             options.Clear();
             HashSet<AbilityDef> selected = new HashSet<AbilityDef>();
             selected.AddRange(pawn.Pawn.abilities.abilities.Select(a => a.def));
-            foreach (var option in DefDatabase<AbilityDef>.AllDefs) {
-                options.Add(new Option() {
-                    Value = option,
-                    Selected = selected.Contains(option),
-                    Disabled = false
-                });
-            }
+            options = DefDatabase<AbilityDef>.AllDefs.Where(a => !a.uiIcon?.NullOrBad() ?? false)
+                .OrderBy(def => def.label)
+                .Select(def => new Option() {
+                    Value = def,
+                    Selected = selected.Contains(def),
+                    Disabled = false,
+                }).ToList();
         }
 
         public string HeaderLabel {
@@ -84,7 +84,7 @@ namespace EdB.PrepareCarefully {
             set;
         }
 
-        public Action<CustomPawn> SelectAction {
+        public Action<CustomizedPawn> SelectAction {
             get;
             set;
         }
@@ -124,7 +124,7 @@ namespace EdB.PrepareCarefully {
             FooterHeight = 40f;
             WindowPadding = 18;
             ContentMargin = new Vector2(10f, 18f);
-            WindowSize = new Vector2(440f, 584f);
+            WindowSize = new Vector2(550f, 584f);
             ButtonSize = new Vector2(140f, 40f);
 
             ContentSize = new Vector2(WindowSize.x - WindowPadding * 2 - ContentMargin.x * 2,
@@ -168,6 +168,7 @@ namespace EdB.PrepareCarefully {
                     GUI.color = Color.white;
                     Rect iconRect = new Rect(rect.x, rect.y + 4, 32, 32);
                     GUI.DrawTexture(iconRect, option.Value.uiIcon);
+                    
                 }
             });
             table.AddColumn(new WidgetTable<Option>.Column() {
@@ -185,14 +186,46 @@ namespace EdB.PrepareCarefully {
                     GUI.DrawTexture(dottedLineRect, Textures.TextureDottedLine);
                     Vector2 labelSize = Text.CalcSize(option.Value.LabelCap);
                     GUI.color = Style.ColorWindowBackground;
-                    GUI.DrawTexture(new Rect(labelRect.x, labelRect.y, labelSize.x + 2, labelRect.height), BaseContent.WhiteTex);
                     GUI.DrawTexture(checkboxRect.InsetBy(-2, -2, -40, -2), BaseContent.WhiteTex);
+
+                    Rect labelUnderlayRect = new Rect(labelRect.x, labelRect.y, labelSize.x, labelRect.height);
+                    Rect subtitleRect = labelRect;
+                    string subtitle = null;
+                    if (option.Value.IsPsycast) {
+                        subtitle = "EdB.PC.Dialog.Abilties.PsycastLevelLabel".Translate(option.Value.level);
+                    }
+                    if (subtitle != null) {
+                        Vector2 subtitleSize = Text.CalcSize(option.Value.LabelCap);
+                        if (subtitleSize.x > labelUnderlayRect.width) {
+                            labelUnderlayRect = new Rect(labelUnderlayRect.x, labelUnderlayRect.y, subtitleSize.x, labelUnderlayRect.width);
+                        }
+                        labelRect = labelRect.OffsetBy(0, -10);
+                        subtitleRect = new Rect(labelRect.x, labelRect.yMax - 6, labelRect.width, 18);
+                        GUI.color = Style.ColorWindowBackground;
+                    }
+                    GUI.color = Style.ColorWindowBackground;
+                    GUI.DrawTexture(labelUnderlayRect.OffsetBy(-1, 0).GrowBy(2, 0), BaseContent.WhiteTex);
 
                     TooltipHandler.TipRegion(labelRect, new TipSignal(() => option.Value.GetTooltip(pawn.Pawn), 23467344));
                     if (!option.Disabled) {
-                        Style.SetGUIColorForButton(labelRect, option.Selected, Style.ColorText, Style.ColorButtonHighlight, Style.ColorButtonHighlight);
-                        Widgets.Label(labelRect, option.Value.LabelCap);
+                        Style.SetGUIColorForButton(rect, option.Selected, Style.ColorText, Style.ColorButtonHighlight, Style.ColorButtonHighlight);
+                        Widgets.Label(labelRect.OffsetBy(0, -2), option.Value.LabelCap);
+                        Text.Font = GameFont.Tiny;
+                        Widgets.Label(subtitleRect, subtitle);
+                        Text.Font = GameFont.Small;
                         if (Widgets.ButtonInvisible(clickRect)) {
+                            Logger.Debug("Selected " + option.Value.defName);
+                            Logger.Debug("  uiIcon.NullOrBad() = " + option.Value.uiIcon?.NullOrBad());
+                            Logger.Debug("  comps = " + option.Value.comps?.Select(c => c.compClass.Name).CommaDelimitedList());
+                            Logger.Debug("  generated = " + option.Value.generated);
+                            Logger.Debug("  hostile = " + option.Value.hostile);
+                            Logger.Debug("  showWhenDrafted = " + option.Value.showWhenDrafted);
+                            Logger.Debug("  showOnCharacterCard = " + option.Value.showOnCharacterCard);
+                            Logger.Debug("  aiCanUse = " + option.Value.aiCanUse);
+                            Logger.Debug("  abilityClass = " + option.Value.abilityClass?.Name);
+                            Logger.Debug("  category = " + option.Value.category?.defName);
+                            Logger.Debug("  groupAbility = " + option.Value.groupAbility);
+                            Logger.Debug("  StatSummary() = " + option.Value.StatSummary());
                             ClickOptionAction(option);
                         }
                         GUI.color = Color.white;
@@ -205,8 +238,17 @@ namespace EdB.PrepareCarefully {
                         }
                     }
                     else {
-                        GUI.color = Style.ColorControlDisabled;
-                        Widgets.Label(labelRect, option.Value.LabelCap);
+                        if (subtitle == null) {
+                            GUI.color = Style.ColorControlDisabled;
+                            Widgets.Label(labelRect.OffsetBy(0, -2), option.Value.LabelCap);
+                        }
+                        else {
+                            GUI.color = Style.ColorControlDisabled;
+                            Widgets.Label(labelRect, option.Value.LabelCap);
+                            Text.Font = GameFont.Tiny;
+                            Widgets.Label(subtitleRect, subtitle);
+                            Text.Font = GameFont.Small;
+                        }
                         GUI.DrawTexture(checkboxRect, option.Selected ? Textures.TextureCheckboxPartiallySelected : Textures.TextureCheckbox);
                         if (Widgets.ButtonInvisible(checkboxRect)) {
                             ClickOptionAction(option);

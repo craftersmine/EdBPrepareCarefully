@@ -57,6 +57,17 @@ namespace EdB.PrepareCarefully {
         public static Texture2D TextureFilterAtlas1;
         public static Texture2D TextureFilterAtlas2;
         public static Texture2D TextureButtonCloseSmall;
+        public static Texture2D TextureBaby;
+        public static Texture2D TextureChild;
+        public static Texture2D TextureAdult;
+        public static Texture2D TextureButtonManage;
+        public static Texture2D TextureButtonRotateView;
+        public static Texture2D TextureFieldAtlasWhite;
+        public static Texture2D TextureIconWarning;
+        public static Texture2D TextureFavoriteColor;
+        public static Texture2D TextureIdeoColor;
+        public static Texture2D TextureCheckmark;
+        public static Texture2D TextureCheckmarkForcedSelection;
 
         public static Texture2D TextureWhite {
             get {
@@ -130,6 +141,9 @@ namespace EdB.PrepareCarefully {
             TextureButtonColonyPawn = ContentFinder<Texture2D>.Get("EdB/PrepareCarefully/ButtonColonyPawn", true);
             TextureFilterAtlas1 = ContentFinder<Texture2D>.Get("EdB/PrepareCarefully/FilterAtlas1", true);
             TextureFilterAtlas2 = ContentFinder<Texture2D>.Get("EdB/PrepareCarefully/FilterAtlas2", true);
+            TextureButtonManage = ContentFinder<Texture2D>.Get("EdB/PrepareCarefully/ButtonManage", false);
+            TextureButtonRotateView = ContentFinder<Texture2D>.Get("EdB/PrepareCarefully/ButtonRotateView", false);
+            TextureIconWarning = ContentFinder<Texture2D>.Get("EdB/PrepareCarefully/IconWarning", false);
 
             TextureTabAtlas = ContentFinder<Texture2D>.Get("UI/Widgets/TabAtlas", true);
 
@@ -139,7 +153,19 @@ namespace EdB.PrepareCarefully {
 
             TextureAlternateRow = SolidColorMaterials.NewSolidColorTexture(new Color(1, 1, 1, 0.05f));
             TextureSkillBarFill = SolidColorMaterials.NewSolidColorTexture(new Color(1f, 1f, 1f, 0.1f));
-            
+
+            TextureBaby = ContentFinder<Texture2D>.Get("UI/Icons/DevelopmentalStages/Baby", false);
+            TextureChild = ContentFinder<Texture2D>.Get("UI/Icons/DevelopmentalStages/Child", false);
+            TextureAdult = ContentFinder<Texture2D>.Get("UI/Icons/DevelopmentalStages/Adult", false);
+
+            TextureFieldAtlasWhite = ContentFinder<Texture2D>.Get("EdB/PrepareCarefully/FieldAtlasWhite", true);
+
+            TextureFavoriteColor = ContentFinder<Texture2D>.Get("UI/Icons/ColorSelector/ColorFavourite", true);
+            TextureIdeoColor = ContentFinder<Texture2D>.Get("UI/Icons/ColorSelector/ColorIdeology", true);
+
+            TextureCheckmark = ContentFinder<Texture2D>.Get("EdB/PrepareCarefully/Checkmark", true);
+            TextureCheckmarkForcedSelection = ContentFinder<Texture2D>.Get("EdB/PrepareCarefully/CheckmarkForcedSelection", true);
+
             loaded = true;
         }
     }
