@@ -3,6 +3,57 @@
 <!-- created by craftersmine - https://github.com/craftersmine -->
 
 <!-- CHANGE NOTES -->
+ 
+<!-- v1.5.8 -->
+<!-- ADDED: EdB.PC.Dialog.Implant.InstallImplantLabel -->
+<!-- ADDED: EdB.PC.Dialog.Implant.LevelLabel -->
+<!-- ADDED: EdB.PC.Dialog.Implant.RequiredImplantMessage -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.MechCategoryLabel -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.RandomMechLabel -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.OverseenChanceLabel -->
+<!-- ADDED: EdB.PC.Equipment.SelectedEquipment.OverseenChanceLabel -->
+<!-- ADDED: EdB.PC.Equipment.SelectedEquipment.SpawnType.Mech -->
+<!-- ADDED: EdB.PC.Equipment.Type.Mechs -->
+
+<!-- v1.5.3 -->
+<!-- ADDED: EdB.PC.Panel.Apparel.ApparelLocked -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.DefaultStyleOption -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.StyleLabel -->
+<!-- ADDED: EdB.PC.AddRelationship.Compatibility -->
+<!-- ADDED: EdB.PC.AddRelationship.UnknownCompatibility -->
+
+<!-- v1.5.1 -->
+<!-- ADDED: EdB.PC.Dialog.ManageApparel.AllLayers -->
+<!-- ADDED: EdB.PC.Dialog.ManageApparel.AddApparelButton -->
+<!-- ADDED: EdB.PC.Dialog.ManageApparel.UpdateApparelButton -->
+<!-- ADDED: EdB.PC.Dialog.Abilties.PsycastLevelLabel -->
+<!-- ADDED: EdB.PC.Dialog.Preset.Error.FailedToLoad -->
+<!-- ADDED: EdB.PC.Panel.AvailableEquipment.AddButtonLabel -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.CostLabelAndValue -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.DefaultSpawnTypeOption -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.GenderLabel -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.HitPointsLabel -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.MaterialLabel -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.QualityLabel -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.RandomAnimalLabel -->
+<!-- ADDED: EdB.PC.Equipment.AvailableEquipment.SpawnTypeLabel -->
+<!-- ADDED: EdB.PC.Equipment.SelectedEquipment.SpawnType.Animal -->
+<!-- ADDED: EdB.PC.Equipment.SelectedEquipment.SpawnType.Possession -->
+<!-- ADDED: EdB.PC.Equipment.SelectedEquipment.SpawnType.SpawnsNear -->
+<!-- ADDED: EdB.PC.Equipment.SelectedEquipment.SpawnType.SpawnsWith -->
+<!-- ADDED: EdB.PC.Equipment.DefaultOption -->
+<!-- ADDED: EdB.PC.Page.Points.CostSummary.Possessions -->
+<!-- ADDED: EdB.PC.Panel.Backstory.FavoriteColorLabel -->
+
+<!-- v1.4.1 -->
+<!-- ADDED: EdB.PC.Page.Points.DisablePoints -->
+<!-- ADDED: EdB.PC.Panel.Randomize.Tip.DevelopmentalStage -->
+<!-- ADDED: EdB.PC.Panel.Randomize.Tip.Xenotype -->
+<!-- ADDED: EdB.PC.Panel.Age.Label.BiologicalAge -->
+<!-- ADDED: EdB.PC.Panel.Age.Label.ChronologicalAge -->
+<!-- ADDED: EdB.PC.Panel.Age.Label.Years -->
+<!-- ADDED: EdB.PC.Panel.Age.Label.Days -->
+
 <!-- v1.3.9 -->
 <!-- ADDED: EdB.PC.Dialog.Abilities.Header -->
 <!-- ADDED: EdB.PC.Dialog.Titles.Header -->
@@ -124,6 +175,8 @@
   <EdB.PC.AddRelationship.Error.RelationshipRequired>Вы должны выбрать отношения</EdB.PC.AddRelationship.Error.RelationshipRequired>
   <EdB.PC.AddRelationship.Error.SourceRequired>Вы должны выбрать персонажа</EdB.PC.AddRelationship.Error.SourceRequired>
   <EdB.PC.AddRelationship.Error.TargetRequired>Вы должны выбрать персонажа</EdB.PC.AddRelationship.Error.TargetRequired>
+  <EdB.PC.AddRelationship.Compatibility>Очки совместимости: {0}</EdB.PC.AddRelationship.Compatibility>
+  <EdB.PC.AddRelationship.UnknownCompatibility>Неизвестно</EdB.PC.AddRelationship.UnknownCompatibility>
 
   <EdB.PC.Animals.LabelWithGender>{0}, {1}</EdB.PC.Animals.LabelWithGender>
   <EdB.PC.Animals.LabelWithoutGender>{0}</EdB.PC.Animals.LabelWithoutGender>
@@ -141,6 +194,7 @@
   <EdB.PC.Common.Select>Выбрать</EdB.PC.Common.Select>
 
   <EdB.PC.Dialog.Abilities.Header>Выберите способности</EdB.PC.Dialog.Abilities.Header>
+  <EdB.PC.Dialog.Abilties.PsycastLevelLabel>Уровень псикаста: {0}</EdB.PC.Dialog.Abilties.PsycastLevelLabel>
   
   <EdB.PC.Dialog.Backstory.Filter.Add>Добавить фильтр</EdB.PC.Dialog.Backstory.Filter.Add>
   <EdB.PC.Dialog.Backstory.Filter.NoDisabledWorkTypes>Без отключенных типов работ</EdB.PC.Dialog.Backstory.Filter.NoDisabledWorkTypes>
@@ -168,10 +222,17 @@
   <EdB.PC.Dialog.Implant.Button.Confirm>Применить</EdB.PC.Dialog.Implant.Button.Confirm>
   <EdB.PC.Dialog.Implant.Conflict>Этот имплант не может быть установлен так как он конфликтует со следующим:\n\n- {0}, {1}</EdB.PC.Dialog.Implant.Conflict>
   <EdB.PC.Dialog.Implant.Header>Выберите импланты и бионику</EdB.PC.Dialog.Implant.Header>
+  <EdB.PC.Dialog.Implant.InstallImplantLabel>Имплант: {0}</EdB.PC.Dialog.Implant.InstallImplantLabel>
+  <EdB.PC.Dialog.Implant.RequiredImplantMessage>Этот имплант должен быть добавлен, поскольку он требуется для другого импланта который вы выбрали</EdB.PC.Dialog.Implant.RequiredImplantMessage>
+  <EdB.PC.Dialog.Implant.LevelLabel>{0}:</EdB.PC.Dialog.Implant.LevelLabel>
 
   <EdB.PC.Dialog.Injury.Header>Выберите условие</EdB.PC.Dialog.Injury.Header>
   <EdB.PC.Dialog.Injury.Error.Required>Вы должны выбрать условие</EdB.PC.Dialog.Injury.Error.Required>
   <EdB.PC.Dialog.Injury.OldInjury.Label>{0} ({1})</EdB.PC.Dialog.Injury.OldInjury.Label>
+
+  <EdB.PC.Dialog.ManageApparel.AllLayers>Все слои</EdB.PC.Dialog.ManageApparel.AllLayers>
+  <EdB.PC.Dialog.ManageApparel.AddApparelButton>Добавить</EdB.PC.Dialog.ManageApparel.AddApparelButton>
+  <EdB.PC.Dialog.ManageApparel.UpdateApparelButton>Обновить</EdB.PC.Dialog.ManageApparel.UpdateApparelButton>
 
   <EdB.PC.Dialog.PawnPreset.Button.Load>Загрузить</EdB.PC.Dialog.PawnPreset.Button.Load>
   <EdB.PC.Dialog.PawnPreset.Button.Save>Сохранить</EdB.PC.Dialog.PawnPreset.Button.Save>
@@ -188,11 +249,12 @@
   <EdB.PC.Dialog.Preset.Error.EquipmentFailed>Не удалось загрузить снаряжение из предустановки.</EdB.PC.Dialog.Preset.Error.EquipmentFailed>
   <EdB.PC.Dialog.Preset.Error.Failed>Не удалось загрузить колонистов из предустановки. Проверьте, все ли требуемые моды включены и загружены.</EdB.PC.Dialog.Preset.Error.Failed>
   <EdB.PC.Dialog.Preset.Error.PartialSaveFailure>Возникли некоторые проблемы при сохранении предустановки. Некоторые настройки не были сохранены.</EdB.PC.Dialog.Preset.Error.PartialSaveFailure>
-  <EdB.PC.Dialog.Preset.Error.PreAlpha13NotSupported>Предустановки сохраненные в версии Alpha 13 не поддерживаются.</EdB.PC.Dialog.Preset.Error.PreAlpha13NotSupported>
-  <EdB.PC.Dialog.Preset.Error.RelationshipFailed>Could not load a custom relationship from the preset.</EdB.PC.Dialog.Preset.Error.RelationshipFailed>
+  <EdB.PC.Dialog.Preset.Error.PreAlpha13NotSupported>Предустановки сохраненные в версии Pre-alpha 13 не поддерживаются.</EdB.PC.Dialog.Preset.Error.PreAlpha13NotSupported>
+  <EdB.PC.Dialog.Preset.Error.RelationshipFailed>Не удалось загрузить пользовательские отношения из предустановки.</EdB.PC.Dialog.Preset.Error.RelationshipFailed>
   <EdB.PC.Dialog.Preset.Error.SaveFailed>Возникла проблема при сохранении предустановки. Возможно вы не сможете загрузить предустановку.</EdB.PC.Dialog.Preset.Error.SaveFailed>
   <EdB.PC.Dialog.Preset.Error.ThingDefFailed>Невозможно полностью загрузить предустановку. Проверьте, все ли требуемые моды включены и загружены.</EdB.PC.Dialog.Preset.Error.ThingDefFailed>
   <EdB.PC.Dialog.Preset.Error.NoCharacter>Не удалось загрузить сохраненного персонажа. Проверьте, все ли требуемые моды включены и загружены.</EdB.PC.Dialog.Preset.Error.NoCharacter>
+  <EdB.PC.Dialog.Preset.Error.FailedToLoad>Не удалось загрузить предустановку {0}</EdB.PC.Dialog.Preset.Error.FailedToLoad>
   <EdB.PC.Dialog.Preset.Loaded>Загружена предустановка {0}</EdB.PC.Dialog.Preset.Loaded>
 
   <EdB.PC.Dialog.Severity.Header>Выберите уровень серьезности</EdB.PC.Dialog.Severity.Header>
@@ -212,10 +274,12 @@
 "{0}"</EdB.PC.Dialog.UnrecoverableError.Message>
 
   <EdB.PC.Equipment.AnimalLabel>{0} {1}</EdB.PC.Equipment.AnimalLabel>
+  <EdB.PC.Equipment.DefaultOption>По умолчанию</EdB.PC.Equipment.DefaultOption>
   <EdB.PC.Equipment.Type.Animals>Животные</EdB.PC.Equipment.Type.Animals>
   <EdB.PC.Equipment.Type.Apparel>Одежда</EdB.PC.Equipment.Type.Apparel>
   <EdB.PC.Equipment.Type.Buildings>Мебель</EdB.PC.Equipment.Type.Buildings>
   <EdB.PC.Equipment.Type.Food>Еда</EdB.PC.Equipment.Type.Food>
+  <EdB.PC.Equipment.Type.Mechs>Механоиды</EdB.PC.Equipment.Type.Mechs>
   <EdB.PC.Equipment.Type.Medical>Медикаменты</EdB.PC.Equipment.Type.Medical>
   <EdB.PC.Equipment.Type.Resources>Ресурсы</EdB.PC.Equipment.Type.Resources>
   <EdB.PC.Equipment.Type.Weapons>Оружие</EdB.PC.Equipment.Type.Weapons>
@@ -223,6 +287,27 @@
   <EdB.PC.Equipment.LoadingProgress.StuffDefs>Обработка материалов...</EdB.PC.Equipment.LoadingProgress.StuffDefs>
   <EdB.PC.Equipment.LoadingProgress.ThingDefs>Обработка предметов...</EdB.PC.Equipment.LoadingProgress.ThingDefs>
   <EdB.PC.Equipment.LoadingProgress.Finished>Завершено</EdB.PC.Equipment.LoadingProgress.Finished>
+  <EdB.PC.Equipment.SelectedEquipment.OverseenChanceLabel>{0}: {1}%</EdB.PC.Equipment.SelectedEquipment.OverseenChanceLabel>
+  <EdB.PC.Equipment.SelectedEquipment.SpawnType.SpawnsWith>Начать с</EdB.PC.Equipment.SelectedEquipment.SpawnType.SpawnsWith>
+  <EdB.PC.Equipment.SelectedEquipment.SpawnType.SpawnsNear>Начать рядом</EdB.PC.Equipment.SelectedEquipment.SpawnType.SpawnsNear>
+  <EdB.PC.Equipment.SelectedEquipment.SpawnType.Possession>Владения - {0}</EdB.PC.Equipment.SelectedEquipment.SpawnType.Possession>
+  <EdB.PC.Equipment.SelectedEquipment.SpawnType.Animal>Животные</EdB.PC.Equipment.SelectedEquipment.SpawnType.Animal>
+  <EdB.PC.Equipment.SelectedEquipment.SpawnType.Mech>Механоиды</EdB.PC.Equipment.SelectedEquipment.SpawnType.Mech>
+  <EdB.PC.Equipment.AvailableEquipment.AllCategoriesOption>Все категории</EdB.PC.Equipment.AvailableEquipment.AllCategoriesOption>
+  <EdB.PC.Equipment.AvailableEquipment.AllModsOption>Все моды</EdB.PC.Equipment.AvailableEquipment.AllModsOption>
+  <EdB.PC.Equipment.AvailableEquipment.CostLabelAndValue>Стоимость: {0}</EdB.PC.Equipment.AvailableEquipment.CostLabelAndValue>
+  <EdB.PC.Equipment.AvailableEquipment.DefaultSpawnTypeOption>По умолчанию</EdB.PC.Equipment.AvailableEquipment.DefaultSpawnTypeOption>
+  <EdB.PC.Equipment.AvailableEquipment.DefaultStyleOption>По умолчанию</EdB.PC.Equipment.AvailableEquipment.DefaultStyleOption>
+  <EdB.PC.Equipment.AvailableEquipment.GenderLabel>Пол:</EdB.PC.Equipment.AvailableEquipment.GenderLabel>
+  <EdB.PC.Equipment.AvailableEquipment.HitPointsLabel>Очки здоровья:</EdB.PC.Equipment.AvailableEquipment.HitPointsLabel>
+  <EdB.PC.Equipment.AvailableEquipment.MaterialLabel>Материал:</EdB.PC.Equipment.AvailableEquipment.MaterialLabel>
+  <EdB.PC.Equipment.AvailableEquipment.MechCategoryLabel>Механоиды</EdB.PC.Equipment.AvailableEquipment.MechCategoryLabel>
+  <EdB.PC.Equipment.AvailableEquipment.QualityLabel>Качество:</EdB.PC.Equipment.AvailableEquipment.QualityLabel>
+  <EdB.PC.Equipment.AvailableEquipment.OverseenChanceLabel>{0}:</EdB.PC.Equipment.AvailableEquipment.OverseenChanceLabel>
+  <EdB.PC.Equipment.AvailableEquipment.RandomAnimalLabel>Случайный питомец</EdB.PC.Equipment.AvailableEquipment.RandomAnimalLabel>
+  <EdB.PC.Equipment.AvailableEquipment.RandomMechLabel>Случайный механоид</EdB.PC.Equipment.AvailableEquipment.RandomMechLabel>
+  <EdB.PC.Equipment.AvailableEquipment.SpawnTypeLabel>Тип спавна:</EdB.PC.Equipment.AvailableEquipment.SpawnTypeLabel>
+  <EdB.PC.Equipment.AvailableEquipment.StyleLabel>Стиль:</EdB.PC.Equipment.AvailableEquipment.StyleLabel>
 
   <EdB.PC.Error.NotEnoughPoints>Вы потратили слишком много очков.</EdB.PC.Error.NotEnoughPoints>
   <EdB.PC.Error.NotEnoughColonists1>Вы должны иметь как минимум одного колониста.</EdB.PC.Error.NotEnoughColonists1>
@@ -284,6 +369,8 @@
   <EdB.PC.Page.Points.CostSummary.Apparel>Одежда: {0}</EdB.PC.Page.Points.CostSummary.Apparel>
   <EdB.PC.Page.Points.CostSummary.Colonist>{0}: {1}</EdB.PC.Page.Points.CostSummary.Colonist>
   <EdB.PC.Page.Points.CostSummary.Implants>Импланты: {0}</EdB.PC.Page.Points.CostSummary.Implants>
+  <EdB.PC.Page.Points.CostSummary.Possessions>Владения: {0}</EdB.PC.Page.Points.CostSummary.Possessions>
+  <EdB.PC.Page.Points.DisablePoints>Отключить ограничения очков</EdB.PC.Page.Points.DisablePoints>
   <EdB.PC.Page.Points.NotEnoughPoints>Вы потратили слишком много очков.</EdB.PC.Page.Points.NotEnoughPoints>
   <EdB.PC.Page.Points.Remaining>Очков осталось: {0}</EdB.PC.Page.Points.Remaining>
   <EdB.PC.Page.Points.ScenarioPoints>Стартовые колонисты и ресурсы которые были случайно сгенерированы для этого сценария стоили {0} очка(ов).</EdB.PC.Page.Points.ScenarioPoints>
@@ -298,8 +385,15 @@
 
   <EdB.PC.Panel.Abilities.None>Без способности</EdB.PC.Panel.Abilities.None>
   
+  <EdB.PC.Panel.Age.Header>Возраст</EdB.PC.Panel.Age.Header>
+  <EdB.PC.Panel.Age.Label.BiologicalAge>Биологический</EdB.PC.Panel.Age.Label.BiologicalAge>
+  <EdB.PC.Panel.Age.Label.ChronologicalAge>Хронологический</EdB.PC.Panel.Age.Label.ChronologicalAge>
+  <EdB.PC.Panel.Age.Label.Years>Лет</EdB.PC.Panel.Age.Label.Years>
+  <EdB.PC.Panel.Age.Label.Days>День</EdB.PC.Panel.Age.Label.Days>
   <EdB.PC.Panel.Age.Biological>Биолог. возраст</EdB.PC.Panel.Age.Biological>
   <EdB.PC.Panel.Age.Chronological>Хронол. возраст</EdB.PC.Panel.Age.Chronological>
+
+  <EdB.PC.Panel.Apparel.ApparelLocked>Этот персонаж ограничен в ножении снаряжения</EdB.PC.Panel.Apparel.ApparelLocked>
 
   <EdB.PC.Panel.Appearance.ApparelConflict.Description>Невозможно одеть выбранный {0} с текущей вещью:</EdB.PC.Panel.Appearance.ApparelConflict.Description>
   <EdB.PC.Panel.Appearance.ApparelConflict.LineItem> - {0}</EdB.PC.Panel.Appearance.ApparelConflict.LineItem>
@@ -308,10 +402,13 @@
   
 Это не влияет на лидеров фракций. Если вы сделаете данного персонажа лидером фракции, ваши настройки вещей будут сохранены.</EdB.PC.Panel.Appearance.WorldPawnAlert>
 
+  <EdB.PC.Panel.AvailableEquipment.AddButtonLabel>Добавить</EdB.PC.Panel.AvailableEquipment.AddButtonLabel>
   <EdB.PC.Panel.AvailableEquipment.Add>Добавить снаряжение</EdB.PC.Panel.AvailableEquipment.Add>
   <EdB.PC.Panel.AvailableEquipment.Materials.All>Все материалы</EdB.PC.Panel.AvailableEquipment.Materials.All>
   <EdB.PC.Panel.AvailableEquipment.Materials.None>Без материалов</EdB.PC.Panel.AvailableEquipment.Materials.None>
 
+  <EdB.PC.Panel.Backstory.FavoriteColorLabel>Любимый цвет:</EdB.PC.Panel.Backstory.FavoriteColorLabel>
+  
   <EdB.PC.Panel.ColonyPawnList.Title>Колония</EdB.PC.Panel.ColonyPawnList.Title>
   
   <EdB.PC.Panel.Health.Error.MustSelectBodyPart>Вы должны выбрать место</EdB.PC.Panel.Health.Error.MustSelectBodyPart>
@@ -345,6 +442,11 @@
   <EdB.PC.Panel.PawnList.PawnCount>({0})</EdB.PC.Panel.PawnList.PawnCount>
   <EdB.PC.Panel.PawnList.SelectFaction>Выбрать из шаблона фракции</EdB.PC.Panel.PawnList.SelectFaction>
 
+  <EdB.PC.Panel.Randomize.Tip.DevelopmentalStage>{0}
+    Нажмите кнопку "Случайно" чтобы сгенерировать колониста в пределах этого уровня развития</EdB.PC.Panel.Randomize.Tip.DevelopmentalStage>
+      <EdB.PC.Panel.Randomize.Tip.Xenotype>{0}
+    Нажмите кнопку "Случайно" чтобы сгенерировать колониста с этим ксенотипом</EdB.PC.Panel.Randomize.Tip.Xenotype>
+      
   <EdB.PC.Panel.RelationshipsOther.Title>Другие отношения</EdB.PC.Panel.RelationshipsOther.Title>
 
   <EdB.PC.Panel.RelationshipsParentChild.Title>Отношения детей, родителей и родственников</EdB.PC.Panel.RelationshipsParentChild.Title>
@@ -370,6 +472,7 @@
   <EdB.PC.TabView.Relationships.Title>Отношения</EdB.PC.TabView.Relationships.Title>
 
   <EdB.PC.Panel.WorldPawnList.Title>Мир</EdB.PC.Panel.WorldPawnList.Title>
+
   
 
 </LanguageData>
